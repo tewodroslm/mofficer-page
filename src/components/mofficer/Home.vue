@@ -24,6 +24,7 @@
          <form class="form-inline">
              <input class="form-control mr-sm-2" type="search" placeholder="Search driver" aria-label="Search">  
          </form>
+         <button class="btn btn-primary" style="margin-left:16%;" @click="signOUT()">Sign out</button>
       </div>
      
     </nav>
@@ -136,60 +137,7 @@
                                         <td><div> {{ driver.status }} </div></td>
                                         
                                       </tr>
-                                      <!-- <tr>
-                                        <td>
-                                          <div class="form-check form-check-flat mt-0">
-                                            <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" aria-checked="false"><i class="input-helper"></i></label>
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <div class="d-flex">
-                                            <img src="images/faces/face4.jpg" alt="">
-                                             <a href="/">
-                                            <div>
-                                              <h6>Matthew Bailey</h6>
-                                              <p>bf5d</p>
-                                            </div>
-                                             </a>
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <h6>Dz</h6>
-                                          <p>8 am</p>
-                                        </td>
-                                        <td>
-                                          <h6>Adama</h6> 
-                                        </td>
-                                        <td><div class="badge badge-opacity-danger">On the move</div></td>
-                                      </tr> -->
-                                      <!-- <tr>
-                                        <td>
-                                          <div class="form-check form-check-flat mt-0">
-                                            <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" aria-checked="false"><i class="input-helper"></i></label>
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <div class="d-flex">
-                                            <img src="images/faces/face5.jpg" alt="">
-                                             <a href="/">
-                                            <div>
-                                              <h6>Katherine Butler</h6>
-                                              <p>codAm</p>
-                                            </div>
-                                             </a>
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <h6>Dz</h6>
-                                          <p>8:30 am</p>
-                                        </td>
-                                        <td>
-                                            <h6>Adama</h6> 
-                                        </td>
-                                        <td><div class="badge badge-opacity-success">Completed</div></td>
-                                      </tr> -->
+                                  
                                     </tbody>
                                   </table>
                                 </div>
@@ -333,6 +281,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 export default {
   name: 'HelloWorld',
   props: {
@@ -375,9 +324,26 @@ export default {
       ]
     }
   },
+  mounted(){
+    this.showDrivers()
+  },
   methods: {
+    ...mapActions([
+				'dashdriver'
+			]),
+    showDrivers(){
+      this.dashdriver()
+          .then(() => {
+            // this.tickets = this.$store.state.tickets 
+            console.log(this.$store.state.tickets)
+            console.log("Success")
+          })
+    },
     modalId(i) {
       return 'modal' + i;
+    },
+    signOUT(){
+      this.$router.replace('/');
     }
   },
 }
@@ -386,7 +352,7 @@ export default {
 
 
  <style scoped >
-@import "../assets/styles/style.css";/*# sourceMappingURL=../maps/vertical-layout-light/style.css.map */
+@import "../../assets/styles/style.css";/*# sourceMappingURL=../maps/vertical-layout-light/style.css.map */
   #body-bak { 
     background-color: rgb(180, 191, 195);
   }
