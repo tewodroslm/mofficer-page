@@ -1,15 +1,21 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import createPersistedState from "vuex-persistedstate";
+
 
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
+	plugins: [createPersistedState({
+        storage: window.sessionStorage,
+    })],
 	state:{
 		accessToken:"",
 		user:{},
 		isAuthenticated: false,
 		role:"",
 		tickets: [],
+		ticketsFrom: [],
 		drivers: [],
 	},
 	mutations:{
@@ -27,6 +33,9 @@ export const store = new Vuex.Store({
 		},
 		setTickets: (state, value) => {
 			state.tickets = value
+		},
+		setTicketsFrom: (state, value) => {
+			state.ticketsFrom = value
 		},
 		setDrivers: (state, value) => {
 			state.drivers = value
@@ -99,6 +108,23 @@ export const store = new Vuex.Store({
 				return console.log(err)
 			}
 		},
+		fromHereDriver: async({commit, state}) => {
+			try {
+				const response = await fetch('http://127.0.0.1:8000/api/departedfromhere', {
+					method: 'GET', 
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer '+ state.accessToken,
+					},
+				});
+				const data = await response.json();
+				// this.$store.state.tickets = [...data.tickets]
+				commit('setTicketsFrom', data.tickets); 
+ 
+			}catch(err){
+				return console.log(err)
+			}
+		}
 	},
   modules: {}
 });

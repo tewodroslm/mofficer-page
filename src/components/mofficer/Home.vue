@@ -17,7 +17,7 @@
       <div class="navbar-menu-wrapper d-flex align-items-top"> 
         <ul class="navbar-nav" style="margin-right:30%;">
           <li class="nav-item font-weight-semibold d-none d-lg-block ms-0">
-            <h1 class="welcome-text" sytle="color:blue;">M. Officer, <span class="text-black fw-bold">John Doe</span></h1>
+            <h1 class="welcome-text" sytle="color:blue;">M. Officer, <span class="text-black fw-bold"> {{  this.$store.state.user.name }} </span></h1><a>{{  this.$store.state.user.email }} </a>
             <h3 class="welcome-sub-text">Menhariya transportation status!</h3>
           </li> 
         </ul>  
@@ -103,7 +103,7 @@
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      <tr v-for="(driver,index) in drivers" :key=driver.index>
+                                      <tr v-for="(driver,index) in shoofier" :key=driver.index>
                                         <td>
                                           <div class="form-check form-check-flat mt-0">
                                             <label class="form-check-label">
@@ -288,56 +288,67 @@ export default {
     msg: String
   },
   data(){
-    return {
-      drivers:[
-        {
-          name: 'Brandon Washington',
-          licence: 'abet23',
-          starting: 'Addis A',
-          destination: 'Debere Z',
-          time: 2,
-          status: 'on the move'
-        },
-        {
-          name: 'Chala',
-          licence: 'chal43',
-          starting: 'Adama',
-          destination: 'Debere Z',
-          time: 2,
-          status: 'on the move'
-        },
-        {
-          name: 'Feyesa',
-          licence: 'feya23',
-          starting: 'Addis A',
-          destination: 'Mekele',
-          time: 2,
-          status: 'complited'
-        }, {
-          name: 'Feyesa',
-          licence: 'feya23',
-          starting: 'Addis A',
-          destination: 'Mekele',
-          time: 2,
-          status: 'complited'
-        },
-      ]
+    return { 
+      shoofier: [],
+      singleDriver: {
+        name: '',
+        licence: '',
+        starting: '',
+        destination: '',
+        time:'',
+        status: ''
+      }
     }
   },
   mounted(){
     this.showDrivers()
   },
+  
   methods: {
     ...mapActions([
-				'dashdriver'
+				'dashdriver', 'fromHereDriver'
 			]),
     showDrivers(){
       this.dashdriver()
           .then(() => {
             // this.tickets = this.$store.state.tickets 
-            console.log(this.$store.state.tickets)
+            console.log("TickETs" ,this.$store.state.tickets)
+            this.$store.state.tickets.forEach( (tval) => {
+              this.$store.state.drivers.forEach((dval) => {
+                if(dval.id == tval.driver_id){
+                  this.shoofier.push({
+                    name: dval.name,
+                    licence: dval.licence,
+                    starting: tval.starting_point,
+                    destination: tval.destination,
+                    time: tval.created_at,
+                    status:  tval.canceled === 1 ? "complited" : "on the move" 
+                  })
+                }
+              })
+            })
             console.log("Success")
           })
+         this.fromHereDriver()
+          .then(() => {
+            // this.tickets = this.$store.state.tickets 
+            console.log("TickETs" ,this.$store.state.ticketsFrom)
+            this.$store.state.ticketsFrom.forEach( (tval) => {
+              this.$store.state.drivers.forEach((dval) => {
+                if(dval.id == tval.driver_id){
+                  this.shoofier.push({
+                    name: dval.name,
+                    licence: dval.licence,
+                    starting: tval.starting_point,
+                    destination: tval.destination,
+                    time: tval.created_at,
+                    status:  tval.canceled === 1 ? "complited" : "on the move" 
+                  })
+                }
+              })
+            })
+            console.log("Success")
+          })                
     },
     modalId(i) {
       return 'modal' + i;
