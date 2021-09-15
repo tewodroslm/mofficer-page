@@ -70,6 +70,8 @@ export const store = new Vuex.Store({
 			
 		},
 		officerLogin: async ({commit, state}, credentials) => {
+			commit('setTickets', [])
+			commit('setTicketsFrom', [])
 			try {
 				const response = await fetch('http://127.0.0.1:8000/api/login-mofficer', {
 					method: 'POST',

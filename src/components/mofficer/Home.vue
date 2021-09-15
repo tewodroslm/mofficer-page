@@ -53,23 +53,23 @@
                         <div class="statistics-details d-flex align-items-center justify-content-between">
                           <div>
                             <p class="statistics-title">Total Vehicles</p>
-                            <h3 class="rate-percentage">32</h3>
-                            <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>-0.5%</span></p>
+                            <h3 class="rate-percentage">{{  this.$store.state.drivers.length }}</h3>
+                            <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span></span></p>
                           </div>
                           <div>
                             <p class="statistics-title">Departed from this bstation</p>
-                            <h3 class="rate-percentage">7</h3>
-                            <p class="text-success d-flex"><i class="mdi mdi-menu-up"></i><span>+0.1%</span></p>
+                            <h3 class="rate-percentage">{{  this.$store.state.ticketsFrom.length }}</h3>
+                            <p class="text-success d-flex"><i class="mdi mdi-menu-up"></i><span></span></p>
                           </div>
                           <div>
                             <p class="statistics-title">On their way to this bstation</p>
-                            <h3 class="rate-percentage">6</h3>
-                            <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>68.8</span></p>
+                            <h3 class="rate-percentage" v-if="this.$store.state.tickets">{{  this.$store.state.tickets.length }}</h3>
+                            <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span> </span></p>
                           </div>
                           <div class="d-none d-md-block">
                             <p class="statistics-title">Total under penality</p>
-                            <h3 class="rate-percentage">2</h3>
-                            <p class="text-success d-flex"><i class="mdi mdi-menu-down"></i><span>+0.8%</span></p>
+                            <h3 class="rate-percentage">0</h3>
+                            <p class="text-success d-flex"><i class="mdi mdi-menu-down"></i><span></span></p>
                           </div> 
                         </div>
                       </div>
@@ -112,7 +112,7 @@
                                         </td>
                                         <td>
                                           <div> 
-                                              <b-button v-b-modal="modalId(index)" variant="outline-primary">
+                                              <b-button v-b-modal="modalId(index)" variant="outline-primary" @click='driverProfile(shoofier[index].licence)'>
                                                 
                                                    <h6>{{ driver.name }}</h6>
                                                    <p>{{ driver.licence }}</p>
@@ -121,7 +121,10 @@
                                                <!-- Modal -->
                                               <b-modal :id="'modal' + index">
                                                   
-                                                      Hello From My Modal!
+                                                      Hello From My Modal!  {{index}} <br/>
+                                                      Name =            {{ shoofier[index].name }} <br/>
+                                                      working route =         
+
                                                   
                                               </b-modal>
                                             <!-- End modal for driver profile -->
@@ -297,42 +300,29 @@ export default {
         destination: '',
         time:'',
         status: ''
-      }
+      },
+      driver:{},
+      nfh:0
     }
   },
   mounted(){
     this.showDrivers()
+    this.showDrivers1()  
+    this.nfromHere() 
   },
   
   methods: {
     ...mapActions([
 				'dashdriver', 'fromHereDriver'
 			]),
-    showDrivers(){
-      this.dashdriver()
+    showDrivers1(){
+      this.fromHereDriver()
           .then(() => {
             // this.tickets = this.$store.state.tickets 
-            console.log("TickETs" ,this.$store.state.tickets)
-            this.$store.state.tickets.forEach( (tval) => {
-              this.$store.state.drivers.forEach((dval) => {
-                if(dval.id == tval.driver_id){
-                  this.shoofier.push({
-                    name: dval.name,
-                    licence: dval.licence,
-                    starting: tval.starting_point,
-                    destination: tval.destination,
-                    time: tval.created_at,
-                    status:  tval.canceled === 1 ? "complited" : "on the move" 
-                  })
-                }
-              })
-            })
-            console.log("Success")
-          })
-         this.fromHereDriver()
-          .then(() => {
-            // this.tickets = this.$store.state.tickets 
-            console.log("TickETs" ,this.$store.state.ticketsFrom)
+            console.log("TickETs From Here" ,this.$store.state.ticketsFrom)
+            if(!this.$store.state.ticketsFrom || !this.$store.state.ticketsFrom.length){
+              console.log("Empty list tickT FrOmE hErE")
+            }else{
             this.$store.state.ticketsFrom.forEach( (tval) => {
               this.$store.state.drivers.forEach((dval) => {
                 if(dval.id == tval.driver_id){
@@ -348,13 +338,57 @@ export default {
               })
             })
             console.log("Success")
-          })                
+            }
+          })        
+    },
+    showDrivers(){
+      this.dashdriver()
+          .then(() => {
+            // this.tickets = this.$store.state.tickets 
+            console.log("TickETs coming to Here" ,this.$store.state.tickets)
+            console.log("DRiveRs" ,this.$store.state.drivers)  
+            if(!this.$store.state.tickets || !this.$store.state.tickets.length){
+              console.log("Empty list tickT tO hErE")
+            }else{
+              this.$store.state.tickets.forEach( (tval) => {
+              this.$store.state.drivers.forEach((dval) => {
+                if(dval.id == tval.driver_id){
+                  this.shoofier.push({
+                    name: dval.name,
+                    licence: dval.licence,
+                    starting: tval.starting_point,
+                    destination: tval.destination,
+                    time: tval.created_at,
+                    status:  tval.canceled === 1 ? "complited" : "on the move" 
+                  })
+                }
+              })
+            })
+            }
+            
+            console.log("Success")
+          })        
+    },
+    nfromHere(){
+      if(this.$store.state.ticketsFrom || this.$store.state.ticketsFrom.length){
+        this.nfh = this.$store.state.ticketsFrom.length
+      }
+      
     },
     modalId(i) {
       return 'modal' + i;
     },
     signOUT(){
       this.$router.replace('/');
+    },
+    driverProfile(licence) {
+      console.log('Driver Clicked isnsdkdkdk')
+      this.$store.state.drivers.forEach((dval) => {
+        if(licence == dval.licence){
+          this.driver = dval
+          console.log('Driver Clicked --> ', this.driver)
+        }
+      })
     }
   },
 }
