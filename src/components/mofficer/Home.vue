@@ -119,14 +119,11 @@
                                                
                                               </b-button>
                                                <!-- Modal -->
-                                              <b-modal :id="'modal' + index">
+                                              <b-modal :id="'modal' + index" v-if="this.message" >
                                                   
-                                                      Hello From My Modal!  {{index}} <br/>
-                                                      Name =            {{ shoofier[index].name }} <br/>
-                                                      working route =         
-
-                                                  
-                                              </b-modal>
+                                                      Hello From My Modal!   
+                                                                                              
+                                              </b-modal> 
                                             <!-- End modal for driver profile -->
                                           </div>
                                         </td>
@@ -167,7 +164,7 @@
                                     <div class="mt-3">
                                       <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
                                         <div class="d-flex">
-                                          <img class="img-sm rounded-10" src="images/faces/face1.jpg" alt="profile">
+                                           
                                           <div class="wrapper ms-3">
                                             <p class="ms-1 mb-1 fw-bold">Brandon Washington</p>
                                             <small class="text-muted mb-0">162543</small>
@@ -179,7 +176,7 @@
                                       </div>
                                       <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
                                         <div class="d-flex">
-                                          <img class="img-sm rounded-10" src="images/faces/face2.jpg" alt="profile">
+                                           
                                           <div class="wrapper ms-3">
                                             <p class="ms-1 mb-1 fw-bold">Wayne Murphy</p>
                                             <small class="text-muted mb-0">162543</small>
@@ -191,7 +188,7 @@
                                       </div>
                                       <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
                                         <div class="d-flex">
-                                          <img class="img-sm rounded-10" src="images/faces/face3.jpg" alt="profile">
+                                          
                                           <div class="wrapper ms-3">
                                             <p class="ms-1 mb-1 fw-bold">Katherine Butler</p>
                                             <small class="text-muted mb-0">162543</small>
@@ -203,7 +200,7 @@
                                       </div>
                                       <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
                                         <div class="d-flex">
-                                          <img class="img-sm rounded-10" src="images/faces/face4.jpg" alt="profile">
+                                          
                                           <div class="wrapper ms-3">
                                             <p class="ms-1 mb-1 fw-bold">Matthew Bailey</p>
                                             <small class="text-muted mb-0">162543</small>
@@ -215,7 +212,7 @@
                                       </div>
                                       <div class="wrapper d-flex align-items-center justify-content-between pt-2">
                                         <div class="d-flex">
-                                          <img class="img-sm rounded-10" src="images/faces/face5.jpg" alt="profile">
+                                         
                                           <div class="wrapper ms-3">
                                             <p class="ms-1 mb-1 fw-bold">Rafell John</p>
                                             <small class="text-muted mb-0">Alaska, USA</small>
@@ -301,7 +298,17 @@ export default {
         time:'',
         status: ''
       },
-      driver:{},
+      sdriver:{
+        name:'',
+        licence:'',
+        working_route: '',
+        car_owner:'',
+        created_at: '',
+        driver_type: '',
+        id: '',
+        updated_at: '',
+      },
+      message: true,
       nfh:0
     }
   },
@@ -385,8 +392,9 @@ export default {
       console.log('Driver Clicked isnsdkdkdk')
       this.$store.state.drivers.forEach((dval) => {
         if(licence == dval.licence){
-          this.driver = dval
-          console.log('Driver Clicked --> ', this.driver)
+          this.sdriver = Object.assign({}, dval)
+          this.message = true
+          console.log("SDriVer " , this.sdriver)
         }
       })
     }
