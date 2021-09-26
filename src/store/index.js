@@ -17,6 +17,8 @@ export const store = new Vuex.Store({
 		tickets: [],
 		ticketsFrom: [],
 		drivers: [],
+		allMofficers:[],
+		allPolices:[],
 	},
 	mutations:{
 		setAccessToken: (state, value) => {
@@ -39,11 +41,88 @@ export const store = new Vuex.Store({
 		},
 		setDrivers: (state, value) => {
 			state.drivers = value
+		},
+		setAllMofficers:(state, value) => {
+			state.allMofficers = value
+		},
+		setAllPolice: (state, value) => {
+			state.allPolices = value
 		}
 	},
 	actions:{
 		setDriversVl: async({commit}, values) => {
 			commit('setDrivers', values)
+		},
+		addpolice: async ({state}, credentials) => {
+			console.log("==============")
+			console.log(state.accessToken)
+			try{
+				const response = await fetch('http://127.0.0.1:8000/api/register-trafficpolice', {
+					method: 'POST', 
+					body: JSON.stringify(credentials),
+					headers: { 
+						'Accept': 'application/json',
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer '+ state.accessToken,
+					},
+				}); 
+				console.log(response)
+			}catch(err){
+				return console.log(err)
+			}
+		}, 
+		addMofficer: async ({state},credentials) => {
+			try {
+				const response = await fetch('http://127.0.0.1:8000/api/register-menhariyaOfficer', {
+					method: 'POST',
+					body: JSON.stringify(credentials),
+					headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer '+ state.accessToken,
+					},
+				}); 
+				//const { accessToken } = data.access_token; 
+				console.log(response)
+			} catch (err) {
+				return console.log(err);
+			}	
+			
+			
+		},
+		getMNofficers: async ({commit, state}) => {
+			try{
+				const response = await fetch('http://127.0.0.1:8000/api/get-mofficers',{
+					method: 'GET', 
+					headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer '+ state.accessToken,
+					},
+				});
+				const data = await response.json();
+				commit('setAllMofficers', data.mofficers);
+				console.log(data.mofficers)
+			}catch (err){
+				return console.log(err)
+			}
+		},
+		getPPolices: async ({commit, state}) => {
+			try{
+				const response = await fetch('http://127.0.0.1:8000/api/get-polices',{
+					method: 'GET', 
+					headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer '+ state.accessToken,
+					},
+				});
+				const data = await response.json();
+				commit('setAllPolice', data.tpolices);
+				console.log(data.tpolices)
+			}catch (err){
+				return console.log(err)
+			}
 		},
 		login: async ({commit, state}, credentials) => {
 			try {

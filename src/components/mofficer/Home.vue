@@ -112,17 +112,39 @@
                                         </td>
                                         <td>
                                           <div> 
-                                              <b-button v-b-modal="modalId(index)" variant="outline-primary" @click='driverProfile(shoofier[index].licence)'>
+                                              <b-button v-b-modal="modalId(index, driver.licence)" variant="outline-primary">
                                                 
                                                    <h6>{{ driver.name }}</h6>
                                                    <p>{{ driver.licence }}</p>
                                                
                                               </b-button>
                                                <!-- Modal -->
-                                              <b-modal :id="'modal' + index" v-if="this.message" >
+                                              <b-modal :id="'modal' + index" >
+                                                <div>
+                                                  <table class="table table-dark">
+                                                    <thead>
+                                                      <tr>
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">Name</th>
+                                                        <th scope="col">Licence number</th>
+                                                        <th scope="col">Working route</th>
+                                                        <th scope="col">Dereja</th>
+                                                        <th scope="col">Registered date</th>
+                                                      </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                      <tr>
+                                                        <th scope="row">1</th>
+                                                        <td> {{ sdriver.name }}</td>
+                                                        <td>{{ sdriver.licence }}  </td>
+                                                        <td>{{ sdriver.working_route }}</td>
+                                                        <td>{{ sdriver.driver_type }}</td>
+                                                        <td>{{ sdriver.created_at }}</td>
+                                                      </tr> 
+                                                    </tbody>
+                                                  </table>
                                                   
-                                                      Hello From My Modal!   
-                                                                                              
+                                                </div>  
                                               </b-modal> 
                                             <!-- End modal for driver profile -->
                                           </div>
@@ -228,36 +250,7 @@
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <!-- <div class="row flex-grow">
-                          <div class="col-12 grid-margin stretch-card">
-                            <div class="card card-rounded">
-                              <div class="card-body">
-                                <div class="row">
-                                  <div class="col-lg-12">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                      <div>
-                                        <h4 class="card-title card-title-dash">Leave Report</h4>
-                                      </div>
-                                      <div>
-                                        <div class="dropdown">
-                                          <button class="btn btn-secondary dropdown-toggle toggle-dark btn-lg mb-0 me-0" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Month Wise </button>
-                                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
-                                            <h6 class="dropdown-header">week Wise</h6>
-                                            <a class="dropdown-item" href="#">Year Wise</a>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div class="mt-3">
-                                      <canvas id="leaveReport"></canvas>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div> -->
+                        </div> 
                       </div>
                     </div>
                   </div>
@@ -309,7 +302,8 @@ export default {
         updated_at: '',
       },
       message: true,
-      nfh:0
+      nfh:0,
+      alldriver:[],
     }
   },
   mounted(){
@@ -330,8 +324,10 @@ export default {
             if(!this.$store.state.ticketsFrom || !this.$store.state.ticketsFrom.length){
               console.log("Empty list tickT FrOmE hErE")
             }else{
+            this.alldriver = [... this.$store.state.drivers]
+           
             this.$store.state.ticketsFrom.forEach( (tval) => {
-              this.$store.state.drivers.forEach((dval) => {
+             this.alldriver.forEach((dval) => {
                 if(dval.id == tval.driver_id){
                   this.shoofier.push({
                     name: dval.name,
@@ -345,6 +341,7 @@ export default {
               })
             })
             console.log("Success")
+             
             }
           })        
     },
@@ -382,22 +379,28 @@ export default {
       }
       
     },
-    modalId(i) {
+    modalId(i, x) {
+      console.log("************")
+
+      this.$store.state.drivers.forEach((dval) => {
+         if(dval.licence == x){ 
+            this.sdriver.name = dval.name
+            this.sdriver.licence = dval.licence
+            this.sdriver.working_route = dval.working_route
+            this.sdriver.created_at = dval.created_at
+            this.sdriver.driver_type = dval.driver_type
+            this.sdriver.id = dval.driver_id 
+         }
+      });
+
+
+      // this.sdriver.working_route = this.$store.state.drivers[this.$store.state.drivers.indexOf(x)].working_route
       return 'modal' + i;
     },
     signOUT(){
       this.$router.replace('/');
     },
-    driverProfile(licence) {
-      console.log('Driver Clicked isnsdkdkdk')
-      this.$store.state.drivers.forEach((dval) => {
-        if(licence == dval.licence){
-          this.sdriver = Object.assign({}, dval)
-          this.message = true
-          console.log("SDriVer " , this.sdriver)
-        }
-      })
-    }
+     
   },
 }
 </script>
