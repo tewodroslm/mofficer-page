@@ -21,8 +21,9 @@
             <h3 class="welcome-sub-text">Menhariya transportation status!</h3>
           </li> 
         </ul>  
-         <form class="form-inline">
-             <input class="form-control mr-sm-2" type="search" placeholder="Search driver" aria-label="Search">  
+         <form class="form-inline" @submit.prevent="submit">
+             <input v-model="licence.licence" class="form-control mr-sm-2" type="text" placeholder="Search driver" aria-label="Search">  
+            <button class="btn" style="color: white;" type="submit">search</button>
          </form>
          <button class="btn btn-primary" style="margin-left:16%;" @click="signOUT()">Sign out</button>
       </div>
@@ -67,8 +68,8 @@
                             <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span> </span></p>
                           </div>
                           <div class="d-none d-md-block">
-                            <p class="statistics-title">Total under penality</p>
-                            <h3 class="rate-percentage">0</h3>
+                            <p class="statistics-title">Total to and from</p>
+                            <h3 class="rate-percentage">{{ this.$store.state.ticketsFrom.length+this.$store.state.tickets.length  }}</h3>
                             <p class="text-success d-flex"><i class="mdi mdi-menu-down"></i><span></span></p>
                           </div> 
                         </div>
@@ -188,60 +189,49 @@
                                         <div class="d-flex">
                                            
                                           <div class="wrapper ms-3">
-                                            <p class="ms-1 mb-1 fw-bold">Brandon Washington</p>
-                                            <small class="text-muted mb-0">162543</small>
+                                            <p class="ms-1 mb-1 fw-bold">Driver one</p>
+                                            <small class="text-muted mb-0">jk-83</small>
                                           </div>
                                         </div>
                                         <div class="text-muted text-small">
-                                          Joined 2y ago
+                                          Addis
                                         </div>
                                       </div>
-                                      <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
-                                        <div class="d-flex">
-                                           
-                                          <div class="wrapper ms-3">
-                                            <p class="ms-1 mb-1 fw-bold">Wayne Murphy</p>
-                                            <small class="text-muted mb-0">162543</small>
-                                          </div>
-                                        </div>
-                                        <div class="text-muted text-small">
-                                          Joined 1y ago
-                                        </div>
-                                      </div>
-                                      <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
-                                        <div class="d-flex">
-                                          
-                                          <div class="wrapper ms-3">
-                                            <p class="ms-1 mb-1 fw-bold">Katherine Butler</p>
-                                            <small class="text-muted mb-0">162543</small>
-                                          </div>
-                                        </div>
-                                        <div class="text-muted text-small">
-                                          Joined 1y ago
-                                        </div>
-                                      </div>
-                                      <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
-                                        <div class="d-flex">
-                                          
-                                          <div class="wrapper ms-3">
-                                            <p class="ms-1 mb-1 fw-bold">Matthew Bailey</p>
-                                            <small class="text-muted mb-0">162543</small>
-                                          </div>
-                                        </div>
-                                        <div class="text-muted text-small">
-                                          Joined 2month ago
-                                        </div>
-                                      </div>
+                                        
                                       <div class="wrapper d-flex align-items-center justify-content-between pt-2">
                                         <div class="d-flex">
                                          
                                           <div class="wrapper ms-3">
-                                            <p class="ms-1 mb-1 fw-bold">Rafell John</p>
-                                            <small class="text-muted mb-0">Alaska, USA</small>
+                                            <p class="ms-1 mb-1 fw-bold">Driver two</p>
+                                            <small class="text-muted mb-0">hu-d3</small>
                                           </div>
                                         </div>
                                         <div class="text-muted text-small">
-                                          Joined 23d ago
+                                          Bahir
+                                        </div>
+                                      </div>
+                                       <div class="wrapper d-flex align-items-center justify-content-between pt-2">
+                                        <div class="d-flex">
+                                         
+                                          <div class="wrapper ms-3">
+                                            <p class="ms-1 mb-1 fw-bold">Driver three</p>
+                                            <small class="text-muted mb-0">hu-d3</small>
+                                          </div>
+                                        </div>
+                                        <div class="text-muted text-small">
+                                          Adama
+                                        </div>
+                                      </div>
+                                       <div class="wrapper d-flex align-items-center justify-content-between pt-2">
+                                        <div class="d-flex">
+                                         
+                                          <div class="wrapper ms-3">
+                                            <p class="ms-1 mb-1 fw-bold">Driver four</p>
+                                            <small class="text-muted mb-0">hu-d3</small>
+                                          </div>
+                                        </div>
+                                        <div class="text-muted text-small">
+                                          Bahir
                                         </div>
                                       </div>
                                     </div>
@@ -291,6 +281,9 @@ export default {
         time:'',
         status: ''
       },
+      licence:{
+        licence:''
+      },
       sdriver:{
         name:'',
         licence:'',
@@ -314,8 +307,9 @@ export default {
   
   methods: {
     ...mapActions([
-				'dashdriver', 'fromHereDriver'
+				'dashdriver', 'fromHereDriver', 'getDriver'
 			]),
+      
     showDrivers1(){
       this.fromHereDriver()
           .then(() => {
@@ -345,6 +339,14 @@ export default {
             }
           })        
     },
+    submit(){
+          this.getDriver(this.licence)
+            .then(() => {
+              console.log("getting driver..")
+              console.log(this.$store.state.driver.driverObm)
+              this.$router.push({ path: 'search' })
+            })
+        },
     showDrivers(){
       this.dashdriver()
           .then(() => {
@@ -363,7 +365,7 @@ export default {
                     starting: tval.starting_point,
                     destination: tval.destination,
                     time: tval.created_at,
-                    status:  tval.canceled === 1 ? "complited" : "on the move" 
+                    status:  tval.canceled === true ? "complited" : "on the move" 
                   })
                 }
               })
@@ -379,6 +381,7 @@ export default {
       }
       
     },
+     
     modalId(i, x) {
       console.log("************")
 
@@ -399,6 +402,13 @@ export default {
     },
     signOUT(){
       this.$router.replace('/');
+      console.log(this.$store.state.accessToken)
+      this.$store.state.accessToken = ''
+      this.$store.state.isAuthenticated = false
+      console.log("SING OUT======")
+      console.log(this.$store.state.accessToken)
+      console.log(this.$store.state.isAuthenticated)
+      
     },
      
   },

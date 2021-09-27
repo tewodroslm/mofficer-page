@@ -12,6 +12,7 @@ export const store = new Vuex.Store({
 	state:{
 		accessToken:"",
 		user:{},
+		driver:{},
 		isAuthenticated: false,
 		role:"",
 		tickets: [],
@@ -19,6 +20,7 @@ export const store = new Vuex.Store({
 		drivers: [],
 		allMofficers:[],
 		allPolices:[],
+		payments:[]
 	},
 	mutations:{
 		setAccessToken: (state, value) => {
@@ -47,6 +49,9 @@ export const store = new Vuex.Store({
 		},
 		setAllPolice: (state, value) => {
 			state.allPolices = value
+		},
+		setPayments: (state, value) => {
+			state.payments = value
 		}
 	},
 	actions:{
@@ -57,7 +62,7 @@ export const store = new Vuex.Store({
 			console.log("==============")
 			console.log(state.accessToken)
 			try{
-				const response = await fetch('http://127.0.0.1:8000/api/register-trafficpolice', {
+				const response = await fetch('https://damp-coast-22655.herokuapp.com/api/register-trafficpolice', {
 					method: 'POST', 
 					body: JSON.stringify(credentials),
 					headers: { 
@@ -73,7 +78,7 @@ export const store = new Vuex.Store({
 		}, 
 		addMofficer: async ({state},credentials) => {
 			try {
-				const response = await fetch('http://127.0.0.1:8000/api/register-menhariyaOfficer', {
+				const response = await fetch('https://damp-coast-22655.herokuapp.com/api/register-menhariyaOfficer', {
 					method: 'POST',
 					body: JSON.stringify(credentials),
 					headers: {
@@ -92,7 +97,7 @@ export const store = new Vuex.Store({
 		},
 		getMNofficers: async ({commit, state}) => {
 			try{
-				const response = await fetch('http://127.0.0.1:8000/api/get-mofficers',{
+				const response = await fetch('https://damp-coast-22655.herokuapp.com/api/get-mofficers',{
 					method: 'GET', 
 					headers: {
 						'Accept': 'application/json',
@@ -109,7 +114,7 @@ export const store = new Vuex.Store({
 		},
 		getPPolices: async ({commit, state}) => {
 			try{
-				const response = await fetch('http://127.0.0.1:8000/api/get-polices',{
+				const response = await fetch('https://damp-coast-22655.herokuapp.com/api/get-polices',{
 					method: 'GET', 
 					headers: {
 						'Accept': 'application/json',
@@ -126,7 +131,7 @@ export const store = new Vuex.Store({
 		},
 		login: async ({commit, state}, credentials) => {
 			try {
-				const response = await fetch('http://127.0.0.1:8000/api/login-admin', {
+				const response = await fetch('https://damp-coast-22655.herokuapp.com/api/login-admin', {
 					method: 'POST',
 					body: JSON.stringify(credentials),
 					headers: {
@@ -152,7 +157,7 @@ export const store = new Vuex.Store({
 			commit('setTickets', [])
 			commit('setTicketsFrom', [])
 			try {
-				const response = await fetch('http://127.0.0.1:8000/api/login-mofficer', {
+				const response = await fetch('https://damp-coast-22655.herokuapp.com/api/login-mofficer', {
 					method: 'POST',
 					body: JSON.stringify(credentials),
 					headers: {
@@ -173,7 +178,7 @@ export const store = new Vuex.Store({
 		},
 		dashdriver: async({commit, state}) => {
 			try {
-				const response = await fetch('http://127.0.0.1:8000/api/toCurrentStaion', {
+				const response = await fetch('https://damp-coast-22655.herokuapp.com/api/toCurrentStaion', {
 					method: 'GET', 
 					headers: {
 						'Content-Type': 'application/json',
@@ -181,7 +186,8 @@ export const store = new Vuex.Store({
 					},
 				});
 				const data = await response.json();
-				
+				console.log("=========== to current ========")
+				console.log(data)
 				commit('setTickets', data.tickets); 
 
 				state.isAuthenticated = true
@@ -191,7 +197,7 @@ export const store = new Vuex.Store({
 		},
 		fromHereDriver: async({commit, state}) => {
 			try {
-				const response = await fetch('http://127.0.0.1:8000/api/departedfromhere', {
+				const response = await fetch('https://damp-coast-22655.herokuapp.com/api/departedfromhere', {
 					method: 'GET', 
 					headers: {
 						'Content-Type': 'application/json',
@@ -199,13 +205,74 @@ export const store = new Vuex.Store({
 					},
 				});
 				const data = await response.json();
+				console.log("=========== from current ========")
+				console.log(data)
 				// this.$store.state.tickets = [...data.tickets]
 				commit('setTicketsFrom', data.tickets); 
  
 			}catch(err){
 				return console.log(err)
 			}
+		},
+		getDriver: async({state}, licence) => {
+			try {
+				const response = await fetch('https://damp-coast-22655.herokuapp.com/api/mocheckdriver',{
+					method: 'POST',
+					body: JSON.stringify(licence),
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer '+ state.accessToken,
+					},
+				});
+				const data = await response.json();
+				Vue.set(state.driver, 'driverObm', data.driver)
+				console.log(data)
+				console.log(state.driver)
+			}catch(err){
+				return console.log(err)
+			}
+		},
+		suspendd: async({state},licence) => {
+			try {
+				const response = await fetch('https://damp-coast-22655.herokuapp.com/api/suspend',{
+					method: 'POST',
+					body: JSON.stringify(licence),
+					headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer '+ state.accessToken,
+					},
+				});
+				const data = await response.json();
+				// Vue.set(state.driver, 'driverObm', data.driver)
+				console.log(data)
+				console.log("Driver suspended")
+			}catch(err){
+				return console.log(err)
+			}
+		},
+		
+		payments: async({commit, state}, licence) => {
+			try {
+				const response = await fetch('https://damp-coast-22655.herokuapp.com/api/payments',{
+					method: 'POST',
+					body: JSON.stringify(licence),
+					headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer '+ state.accessToken,
+					},
+				});
+				const data = await response.json();
+				commit('setPayments', data.payments)
+				console.log(data)
+				console.log(data.payments)
+				console.log("Driver payments")
+			}catch(err){
+				return console.log(err)
+			}
 		}
+
 	},
   modules: {}
 });

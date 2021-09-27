@@ -3,6 +3,7 @@ import User from './components/User.vue'
 import Signin from './components/Signin.vue'
 import Addtpolice from './components/admin/addtrafficpolice.vue'
 import AddMofficer from './components/admin/addmofficer.vue'
+import SearchD from './components/searchDriver.vue'
 
 export const routes = [
     {
@@ -19,6 +20,9 @@ export const routes = [
     },
     {
         path: '/addmo', component: AddMofficer
+    },
+    {
+        path: '/search', component: SearchD
     }
 ]
 
