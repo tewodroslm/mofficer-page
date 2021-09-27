@@ -20,7 +20,8 @@ export const store = new Vuex.Store({
 		drivers: [],
 		allMofficers:[],
 		allPolices:[],
-		payments:[]
+		payments:[],
+		reports:[]
 	},
 	mutations:{
 		setAccessToken: (state, value) => {
@@ -52,6 +53,9 @@ export const store = new Vuex.Store({
 		},
 		setPayments: (state, value) => {
 			state.payments = value
+		},
+		setReports: (state, value) => {
+			state.reports = value
 		}
 	},
 	actions:{
@@ -271,8 +275,32 @@ export const store = new Vuex.Store({
 			}catch(err){
 				return console.log(err)
 			}
+		},
+
+		reports: async({commit, state}, platenumber) => {
+			try {
+				const response = await fetch('https://damp-coast-22655.herokuapp.com/api/get-reports',{
+					method: 'POST',
+					body: JSON.stringify(platenumber),
+					headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer '+ state.accessToken,
+					},
+				});
+				const data = await response.json();
+				commit('setReports', data.reports)
+				console.log(data)
+				console.log("Driver reports888888888888888888888")
+				console.log(data.reports)
+				console.log("Driver reports")
+			}catch(err){
+				return console.log(err)
+			}
 		}
 
 	},
   modules: {}
 });
+
+

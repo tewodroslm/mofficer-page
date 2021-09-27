@@ -30,7 +30,7 @@
                                                       </tr> 
                                                     </tbody>
                                                   </table>
-
+<div> Payments done by the driver </div>
                                                   <table class="table table-dark">
                                                     <thead>
                                                       <tr>
@@ -48,6 +48,32 @@
                                                         <td> {{ pay.amount}}</td>
                                                         <td>{{ pay.bank_account }}</td> 
                                                         <td>{{ pay.created_at }}</td> 
+                                                        <td> 
+                                                        </td>
+                                                      </tr> 
+                                                    </tbody>
+                                                  </table>
+                                            <div> Reports by traffic polices </div>
+                                                  <table class="table table-dark">
+                                                    <thead>
+                                                      <tr>
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">id</th>
+                                                        <th scope="col">Reported area</th>
+                                                        <th scope="col">Plate number</th> 
+                                                        <th scope="col">reason</th>
+                                                        <th scope="col">Reporter Traffic police id</th>
+                                                        <th></th>
+                                                      </tr>
+                                                    </thead>
+                                                    <tbody v-for="(rep) in reportsall" :key=rep.index>
+                                                      <tr>
+                                                        <th scope="row">1</th>
+                                                        <td> {{ rep.id}}</td>
+                                                        <td>{{ rep.place }}</td> 
+                                                        <td>{{ rep.platenumber }}</td> 
+                                                        <td>{{ rep.reason}}</td> 
+                                                        <td>{{ rep.traffic_police_id}}</td> 
                                                         <td> 
                                                         </td>
                                                       </tr> 
@@ -71,19 +97,22 @@ export default{
             licence:{
                 licence:''
             },
+            platenumber:{
+                platenumber:''
+            },
             paymentsall:[], 
         }
     },
     mounted(){ 
         this.licence.licence = this.$store.state.driver.driverObm.licence      
         this.paymentsMethod()  
-       
     },
     methods: {  
          ...mapActions([
-				'suspendd','payments'
+				'suspendd','payments','reports'
 			]),
             paymentsMethod(){
+                this.platenumber.platenumber = this.$store.state.driver.driverObm.car_plate_number
                  this.payments(this.licence)
                 .then(() => {
                     console.log("payments ")
@@ -91,14 +120,24 @@ export default{
                      console.log("===================")
                     console.log(this.paymentsall)
                 })
+                this.reportsMethod()
             },
-        suspend(){
-            console.log(this.$store.state.driver.driverObm.licence)
-            this.suspendd(this.licence)
+            reportsMethod(){
+                console.log("PLATE===============")
+                console.log(this.platenumber.platenumber)
+                this.reports(this.platenumber)
                 .then(() => {
-                    this.sus = "Suspended!!"
+                    console.log("reports ...")
+                    this.reportsall = [...this.$store.state.reports]
                 })
-            console.log("suspended licence")
+            },
+            suspend(){
+                console.log(this.$store.state.driver.driverObm.licence)
+                this.suspendd(this.licence)
+                    .then(() => {
+                        this.sus = "Suspended!!"
+                    })
+                console.log("suspended licence")
         }
     }
 }
